@@ -1,0 +1,349 @@
+{
+	"info": {
+		"_postman_id": "b18b456f-870a-4e6a-bc9d-b8d4e92a1012",
+		"name": "Student Management System API",
+		"description": "Postman Collection for testing Spring Boot REST API for Student Management System with Spring Data JPA and MySQL.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "student_id",
+			"value": "1",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Add a New Student (POST)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 Created\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Response has student id\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.not.be.null;",
+							"    pm.collectionVariables.set(\"student_id\", jsonData.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"course\": \"Computer Science\",\n    \"age\": 21\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/students",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"students"
+					]
+				},
+				"description": "Endpoint: POST /api/students\nAdds a new student to the database."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Retrieve All Students (GET)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response is an array of students\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(Array.isArray(jsonData)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/students",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"students"
+					]
+				},
+				"description": "Endpoint: GET /api/students\nRetrieves a list of all enrolled students."
+			},
+			"response": []
+		},
+		{
+			"name": "3. Retrieve Student by ID (GET)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Returned student matches requested ID\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.eql(parseInt(pm.collectionVariables.get(\"student_id\")));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/students/{{student_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"students",
+						"{{student_id}}"
+					]
+				},
+				"description": "Endpoint: GET /api/students/{id}\nRetrieves details of a specific student by their primary key ID."
+			},
+			"response": []
+		},
+		{
+			"name": "4. Retrieve Student by Course (GET)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"All students in list belong to the specified course\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(Array.isArray(jsonData)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/students/course/Computer Science",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"students",
+						"course",
+						"Computer Science"
+					]
+				},
+				"description": "Endpoint: GET /api/students/course/{course}\nRetrieves all students enrolled in a specific course."
+			},
+			"response": []
+		},
+		{
+			"name": "5. Update Student Details (PUT)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Student details updated successfully\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.name).to.eql(\"John Doe Updated\");",
+							"    pm.expect(jsonData.age).to.eql(22);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"John Doe Updated\",\n    \"email\": \"john.updated@example.com\",\n    \"course\": \"Computer Science\",\n    \"age\": 22\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/students/{{student_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"students",
+						"{{student_id}}"
+					]
+				},
+				"description": "Endpoint: PUT /api/students/{id}\nUpdates the name, email, course, and age of an existing student."
+			},
+			"response": []
+		},
+		{
+			"name": "6. Delete a Student (DELETE)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Success message returned\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.include(\"successfully deleted\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/students/{{student_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"students",
+						"{{student_id}}"
+					]
+				},
+				"description": "Endpoint: DELETE /api/students/{id}\nDeletes a student record by ID."
+			},
+			"response": []
+		},
+		{
+			"name": "7. Exception Handling - Student Not Found (GET 404)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404 Not Found\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"pm.test(\"Error response contains expected details\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(404);",
+							"    pm.expect(jsonData.error).to.eql(\"Not Found\");",
+							"    pm.expect(jsonData.message).to.include(\"not found\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/students/99999",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"students",
+						"99999"
+					]
+				},
+				"description": "Endpoint: GET /api/students/99999\nTests the Global Exception Handler when requesting a non-existent student ID."
+			},
+			"response": []
+		},
+		{
+			"name": "8. Exception Handling - Validation Failure (POST 400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400 Bad Request\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Validation error structure present\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(400);",
+							"    pm.expect(jsonData.validationErrors).to.not.be.undefined;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"\",\n    \"email\": \"invalid-email-address\",\n    \"course\": \"\",\n    \"age\": 0\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/students",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"students"
+					]
+				},
+				"description": "Endpoint: POST /api/students with invalid data\nTests bean validation exception handling."
+			},
+			"response": []
+		}
+	]
+}
+
